@@ -1,0 +1,138 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#faf3e7">
+  <meta name="description" content="拿起一口食物，等小猫张嘴，在嘴边松手。">
+  <meta property="og:title" content="喵一口">
+  <meta property="og:description" content="开饭啦！给小猫喂一口好吃的。">
+  <link rel="icon" href="assets/paw.png" type="image/png">
+  <link rel="stylesheet" href="game.css">
+  <script src="game.js" defer></script>
+  <title>喵一口 · 喂猫小游戏</title>
+</head>
+<body>
+  <header class="topbar">
+    <div class="shell topbar-inner">
+      <div class="brand">
+        <img src="assets/paw.png" width="40" height="40" alt="">
+        <span>喵一口</span>
+      </div>
+      <div class="topbar-actions">
+        <button class="icon-button" id="sound-button" type="button" aria-label="音效" aria-pressed="false">
+          <span class="speaker icon" aria-hidden="true"><i></i></span>
+          <span id="sound-label" aria-hidden="true">音效关</span>
+        </button>
+        <button class="icon-button" id="reset-button" type="button">
+          <span class="reset-icon icon" aria-hidden="true"></span>
+          <span>重来</span>
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <main class="shell game" id="game">
+    <section class="intro" aria-labelledby="game-title">
+      <h1 id="game-title">开饭啦，<br><span>小猫咪！</span></h1>
+      <span class="sunburst" aria-hidden="true"><i></i><i></i><i></i></span>
+      <p>拿起一口食物，送到小猫嘴边。等它张嘴，再松手。</p>
+    </section>
+
+    <figure class="portrait" aria-labelledby="cat-name">
+      <div class="stage" id="stage" data-frame="idle">
+        <div class="cat-view">
+          <div class="cat-sprite">
+            <img class="cat-frame" data-pose="idle" src="assets/cat-idle.webp" width="612" height="998" alt="露出白色胸口的黑白小猫" fetchpriority="high" draggable="false">
+            <img class="cat-frame" data-pose="open" src="assets/cat-open.webp" width="612" height="998" alt="" draggable="false">
+            <img class="cat-frame" data-pose="chew" src="assets/cat-chew.webp" width="612" height="998" alt="" draggable="false">
+            <img class="cat-frame" data-pose="lick" src="assets/cat-lick.webp" width="612" height="998" alt="" draggable="false">
+            <span class="coal-gesture" aria-hidden="true">
+              <img id="coal-gesture-sheet" src="assets/coal-gesture-frames.webp" width="3080" height="2814" alt="" draggable="false">
+            </span>
+          </div>
+          <button class="mouth-target" id="mouth-target" type="button" aria-label="在小猫嘴边送出食物" aria-disabled="true" tabindex="-1"></button>
+          <div class="burst" id="burst" aria-hidden="true"></div>
+        </div>
+        <div class="speech" id="speech" aria-hidden="true">喵～</div>
+      </div>
+      <figcaption class="portrait-caption">
+        <span class="cat-name" id="cat-name">
+          <span class="cat-emblem" aria-hidden="true"><span class="paw"><i></i></span></span>
+          <span>小煤球</span>
+        </span>
+        <span class="mood"><i aria-hidden="true"></i><span id="mood">等你投喂</span></span>
+      </figcaption>
+    </figure>
+
+    <section class="feeding-card" aria-label="投喂小猫">
+      <div class="meter" role="progressbar" aria-labelledby="meter-label" aria-valuemin="0" aria-valuemax="6" aria-valuenow="0" id="meter">
+        <div class="meter-top">
+          <span id="meter-label">饱腹度</span>
+          <span class="count" aria-hidden="true"><strong id="count">0</strong><span>/</span>6</span>
+        </div>
+        <div class="pips" aria-hidden="true">
+          <i></i><i></i><i></i><i></i><i></i><i></i>
+        </div>
+      </div>
+
+      <div class="food-header">
+        <h2 id="food-title">食物</h2>
+        <span class="wallet" title="喂进一口奖励 1 金币"><i aria-hidden="true"></i><strong id="wallet">8</strong> 金币</span>
+      </div>
+      <div class="food-options" role="group" aria-labelledby="food-title">
+        <button class="food-option" type="button" data-food="basic" aria-pressed="true">
+          <strong>普通粮</strong>
+          <span>免费</span>
+        </button>
+        <button class="food-option" type="button" data-food="premium" aria-pressed="false">
+          <strong>高级粮</strong>
+          <span>2 金币/颗</span>
+        </button>
+        <button class="food-option" type="button" data-food="tube" aria-pressed="false">
+          <strong>猫条</strong>
+          <span>3 金币/口</span>
+        </button>
+        <button class="food-option" type="button" data-food="tin" aria-pressed="false">
+          <strong>猫罐头</strong>
+          <span>4 金币/口</span>
+        </button>
+        <button class="food-option" type="button" data-food="meat" aria-pressed="false">
+          <strong>生肉</strong>
+          <span>5 金币/块</span>
+        </button>
+      </div>
+
+      <button class="food-source" id="food-source" data-recipe="basic" type="button" aria-label="猫粮碗，按住拖动或点击拿起">
+        <span class="bowl-spot" aria-hidden="true"></span>
+        <span class="bowl-shine shine-left" aria-hidden="true"></span>
+        <span class="bowl-shine shine-right" aria-hidden="true"></span>
+        <span class="bowl-art" aria-hidden="true">
+          <img class="basic-bowl" src="assets/kibble-bowl.webp" width="460" height="254" alt="" draggable="false">
+          <img class="premium-bowl" src="assets/premium-bowl.webp" width="460" height="262" alt="" draggable="false">
+          <img class="tube-bowl" src="assets/tube-bowl.webp" width="460" height="262" alt="" draggable="false">
+          <img class="tin-bowl" src="assets/tin-bowl.webp" width="460" height="262" alt="" draggable="false">
+          <img class="meat-bowl" src="assets/meat-bowl.webp" width="460" height="262" alt="" draggable="false">
+        </span>
+        <span class="bowl-label"><span class="drag-icon icon" aria-hidden="true"></span><span id="bowl-label">按住捏一颗</span></span>
+      </button>
+
+      <button class="feed-button" id="feed-button" type="button">
+        <span class="paw" aria-hidden="true"><i></i></span>
+        <span id="feed-label">拿起食物</span>
+        <kbd class="key-hint" aria-hidden="true">空格</kbd>
+      </button>
+
+      <button class="feed-button" id="again-button" type="button" hidden>
+        <span class="paw" aria-hidden="true"><i></i></span>
+        再喂一轮
+      </button>
+    </section>
+    <div class="sr-only" id="announcement" role="status"></div>
+  </main>
+  <footer class="shell site-credit">王二鹅ERE 制作</footer>
+
+  <div class="kibble" id="kibble" aria-hidden="true" hidden></div>
+  <noscript><p class="noscript">启用 JavaScript 后就可以给小猫喂食。</p></noscript>
+</body>
+</html>
